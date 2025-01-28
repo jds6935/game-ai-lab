@@ -6,10 +6,14 @@ from ollama import chat
 from util.llm_utils import pretty_stringify_chat, ollama_seed as seed
 
 # Add you code below
-sign_your_name = 'Pulin Agrawal'
-model = ''
-options = {}
-messages = []
+sign_your_name = 'Joel Sander'
+model = 'deepseek-r1:1.5b'
+messages = [
+  {'role': 'system', 'content': 'You are a dungeon master. You need to interact with the players and give them options to choose from. From the players chosen option, create a response that will further the story. \
+    each response you give should end in more options for the players to choose from. You can also give the players information about the world they are in. Do not make a whole story, \
+    but rather a series of interactions that will lead to a story. You can also ask the players questions to further the story. your reponse shoudld be in the form of a (one) paragraph, followed by a list of options for the players to choose from.'},
+]
+options = {'temperature': 0.5, 'max_tokens': 100}
 
 
 # But before here.
@@ -19,7 +23,11 @@ options |= {'seed': seed(sign_your_name)}
 while True:
   response = chat(model=model, messages=messages, stream=False, options=options)
   # Add your code below
+  print(f'Agent: {response.message.content}')
+  messages.append({'role': 'assistant', 'content': response.message.content})
 
+  message = {'role': 'user', 'content': input('You: ')}
+  messages.append(message)
 
   # But before here.
   if messages[-1]['content'] == '/exit':

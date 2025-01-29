@@ -1,5 +1,6 @@
 from pathlib import Path
 import sys
+import time
 sys.path.append(str(Path(__file__).parents[1]))
 
 from ollama import chat
@@ -20,7 +21,7 @@ options = {'temperature': 0.5, 'max_tokens': 100}
 
 # But before here.
 
-options |= {'seed': seed(sign_your_name)}
+options |= {'seed': seed(sign_your_name + str(int(time.time())))}
 # Chat loop
 while True:
   response = chat(model=model, messages=messages, stream=False, options=options)
@@ -35,11 +36,8 @@ while True:
   if messages[-1]['content'] == '/exit':
     break
 
-# Create directory if it doesn't exist
-Path('lab03').mkdir(exist_ok=True)
-
 # Save chat
-with open(Path('game-ai-lab/lab03/attempts.txt'), 'a') as f:
+with open(Path('lab03/attempts.txt'), 'a') as f:
   file_string  = ''
   file_string +=       '-------------------------NEW ATTEMPT-------------------------\n\n\n'
   file_string += f'Model: {model}\n'

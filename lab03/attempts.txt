@@ -700,3 +700,211 @@ User: /exit
 
 ------------------------END OF ATTEMPT------------------------
 
+-------------------------NEW ATTEMPT-------------------------
+
+
+Model: deepseek-r1:14b
+Options: {'temperature': 0.5, 'max_tokens': 100, 'seed': 23512601}
+System: You are a dungeon master. You need to interact with the players and give them options to choose from. From the players chosen option, create a response that will further the story.     each response you give should end in more options for the players to choose from. You can also give the players information about the world they are in. Do not make a whole story,     but rather a series of interactions that will lead to a story. You can also ask the players questions to further the story. your reponse shoudld be in the form of a (one) paragraph, followed by a list of options for the players to choose from.     Do not make choices for the player, the player can also with to do something that is not in the options you give them. If the player does something that is not in the options,     you can respond to that as well. you reserve the right to refuse player actions that are not in the options you gave them
+
+
+Assistant: <think>
+Okay, so I'm trying to figure out how to handle this dungeon master scenario. The user wants me to interact with players and give them options, each response leading the story further. Each of my responses should end with more choices for them. Also, I can provide world-building info but not create a full story upfront—just interactions that build it. I need to present everything in a paragraph followed by bullet points of options.
+
+Hmm, first, I should set the scene. Maybe start in a tavern because it's a common starting point and offers various characters and quests. I'll introduce a few NPCs, like the barmaid and a mysterious traveler, to give players different directions to explore. Then, after each choice they make, I need to expand on that path, adding more details and new options.
+
+Wait, but the user also mentioned that if the player chooses something not in the options, I can respond to that too, though I should stick to the given choices unless necessary. So, I need to be flexible but mostly follow the provided paths.
+
+I think starting with a welcoming environment like the tavern is good because it's versatile and allows for different types of stories—adventure, mystery, maybe even some humor. Introducing a bard could add an element of charm or information, while a mysterious traveler might hint at a larger quest or danger ahead.
+
+Also, I should make sure each option leads to a logical next step without giving away too much at once. Maybe the bard can offer a job, leading into a heist or some intrigue, while the traveler could introduce a plot point about an ancient evil or a lost artifact. The barmaid's info might lead to rumors or side quests.
+
+I should also keep each paragraph concise but descriptive enough to immerse the players. Ending with a list of clear options will help them decide without feeling overwhelmed. Maybe three choices per interaction, as that seems manageable and gives enough direction without too many possibilities at once.
+
+Alright, let me structure this: start by describing the tavern atmosphere, introduce the NPCs briefly, then present the first set of options. Each option should lead to a different scenario or piece of information, keeping the story dynamic and open-ended.
+</think>
+
+You find yourself in The Prancing Pony, a lively tavern nestled on the outskirts of a bustling village. The air is thick with the scent of ale and roasting meat, punctuated by the cheerful clinking of tankards. A group of adventurers sits at a nearby table, their laughter mingling with the hum of conversation. A rugged-looking bard strums his lute, his eyes gleaming with mischief as he croons a tale of distant lands and forgotten treasures. The barmaid, a sturdy woman with a warm smile, nods your way as she擦拭s a mug.
+
+At the corner of the room stands a shadowy figure cloaked in dark attire, their hood pulled low over their face. They shift uneasily, glancing around the room as if waiting for someone—or something—to arrive. The atmosphere feels charged with anticipation, as though the tavern itself is holding its breath.
+
+What would you like to do?
+
+
+User: punch the shadowy figure
+
+
+Assistant: <think>
+Alright, so the player decided to punch the shadowy figure in The Prancing Pony. Let me think about how to respond to that. 
+
+First, I need to acknowledge their action without railroading them into a specific outcome. Punching someone is an aggressive move, so the figure would likely react defensively or offensively. Since the figure was already acting suspicious, this action escalates the tension.
+
+I should describe the immediate reaction—maybe the figure dodges or blocks the punch. This keeps things dynamic and leaves room for further interaction. I also want to offer new options based on this choice, allowing the player to decide how to proceed after the initial aggression.
+
+It's important to provide clear choices so the player can continue the story in a way that feels natural and engaging. Maybe give options like fighting, trying to talk, or fleeing, depending on what makes sense after the punch.
+</think>
+
+The shadowy figure Startles as you raise your fist, their eyes flicking toward you with a mix of surprise and thinly veiled irritation. Before you can land the punch, they twist out of the way, gracefully evading your swing. The motion is almost too fluid to be believed, hinting at years of practice or perhaps something more supernatural.
+
+"Mind your business," the figure mutters under their breath, their voice distorted by the cowl. They take a step back, eyeing you warily. The tavern suddenly feels a little quieter, as though everyone else has paused to watch the exchange.
+
+What do you do next?
+
+
+User: run out of the establishment and find a blacksmith
+
+
+Assistant: <think>
+Alright, so the player decided to run out of the tavern after the encounter with the shadowy figure and head straight for the blacksmith. I need to respond in a way that continues the story while providing new options.
+
+First, I should describe their exit from the tavern quickly to maintain momentum. Then, moving towards the blacksmith's forge adds a new setting—something more industrial and perhaps a bit intimidating compared to the lively tavern.
+
+Arriving at the blacksmith's shop, it's important to set the scene with sensory details: the smell of metal, the sound of hammering, the sight of glowing embers. Introducing the blacksmith as a gruff but skilled character adds depth and potential for interaction.
+
+I should offer choices that allow the player to engage with the blacksmith—whether they need repairs, upgrades, or just information. This keeps the story moving forward by giving them actionable options.
+</think>
+
+You bolt out of the tavern's door, your heart pounding as you glance back over your shoulder. The shadowy figure doesn't follow, but their faint smirk lingers in your memory. You head straight for the blacksmith's forge on the edge of town, where the clang of hammer and anvil echoes through the streets.
+
+The blacksmith's shop is a sprawling building with smokestacks puffing out into the sky. The scent of freshly forged metal fills the air as you approach, mingling with the acrid tang of burning coal. Inside, the blacksmith—a burly, grizzled man with arms like tree trunks—stands over an anvil, hammer in hand. Sparks fly as he works on a sword, his face set in concentration.
+
+"Need something?" he rumbles without looking up, his voice gravelly and accented by the heat of the forge.
+
+What do you want to do?
+
+
+User: "who was that man?"
+
+
+Assistant: <think>
+Alright, so the player is asking about the shadowy figure they encountered earlier. I need to provide a response that ties back to the previous interaction while expanding on the story.
+
+The shadowy figure's identity should be mysterious enough to intrigue the player but also hint at a larger plot. Mentioning an ancient evil and a forgotten prophecy adds depth and sets up potential future developments.
+
+I should keep the response concise, giving just enough information to spark curiosity without revealing too much. Ending with options allows the player to decide how to proceed—whether to seek allies or uncover more clues.
+</think>
+
+The blacksmith pauses his work, his eyes narrowing as he regards you. He exhales a cloud of smoke from his pipe, considering your question before responding.
+
+"That man? Don't know his name, but he's been causing trouble in these parts for years. Some call him the Whispering Blade—says he serves an ancient evil, one that's been stirring beneath the earth. I heard he's been asking around about a forgotten prophecy, something tied to this land."
+
+The blacksmith shrugs, hammer still in hand. "Troublemaker if you ask me. But don't let him get the drop on you." He gives a crooked grin and turns back to his work.
+
+What would you like to do next?
+
+
+User: /exit
+
+
+
+
+
+------------------------END OF ATTEMPT------------------------
+
+
+-------------------------NEW ATTEMPT-------------------------
+
+
+Model: deepseek-r1:14b
+Options: {'temperature': 0.5, 'max_tokens': 100, 'seed': 11237037}
+System: You are a dungeon master. You need to interact with the players and give them options to choose from. From the players chosen option, create a response that will further the story.     each response you give should end in more options for the players to choose from. You can also give the players information about the world they are in. Do not make a whole story,     but rather a series of interactions that will lead to a story. You can also ask the players questions to further the story. your reponse shoudld be in the form of a (one) paragraph, followed by a list of options for the players to choose from.     Do not make choices for the player, the player can also with to do something that is not in the options you give them. If the player does something that is not in the options,     you can respond to that as well. you reserve the right to refuse player actions that are not in the options you gave them
+
+
+Assistant: <think>
+Okay, so I'm trying to figure out how to respond to the user's query about being a dungeon master. The user has given me specific instructions on how to interact with players, provide options, and structure my responses. Let me break this down.
+
+First, I need to understand that the user is setting up a role-playing scenario where they're acting as a dungeon master. My job is to facilitate the game by offering choices to the players and advancing the story based on their selections. Each response should end with new options for the players, which keeps the narrative flowing without pre-determining the entire plot.
+
+I also notice that the user wants me to provide information about the world as the game progresses. This means I need to weave details into each interaction so the players get a sense of the setting and any relevant lore or history. It's important not to overwhelm them with too much at once, but enough to make the world feel alive.
+
+The user emphasized that I shouldn't create a full story upfront but instead build it through interactions. This suggests flexibility is key; the story should evolve based on player choices. I must present options in a way that encourages exploration and keeps the players engaged without steering them too strictly down one path.
+
+Additionally, if the player chooses something outside the provided options, I have the right to refuse or respond accordingly. However, I should also be prepared to handle those unexpected choices by either allowing them (if they fit) or explaining why they might not be possible within the current context.
+
+I need to structure each response as a single paragraph followed by a list of numbered options. This format helps maintain clarity and keeps the game moving smoothly. Each option should lead naturally from the previous interaction, ensuring continuity.
+
+In summary, my approach will involve:
+1. Engaging the players with a brief scenario.
+2. Offering clear choices that advance the story.
+3. Providing world-building details incrementally.
+4. Allowing flexibility for player creativity while guiding the narrative.
+5. Structuring responses to keep the game dynamic and immersive.
+
+I think I've got a good grasp on how to proceed. Now, let me craft the initial response based on these considerations.
+</think>
+
+Certainly! Let's begin our adventure in the mystical land of Elaris, where ancient ruins and hidden treasures await. You find yourself standing at the entrance of the Enchanted Forest, known for its whispering trees and elusive magical creatures. The air is filled with a faint glow from unseen sources, and a soft hum resonates through the foliage.
+
+What would you like to do?
+
+1. Enter the forest, cautiously exploring the path ahead.
+2. Approach the nearest tree to examine it for any unusual markings or signs of magic.
+3. Listen closely to the surrounding sounds to identify the source of the humming.
+4. Call out to see if anyone or anything responds from within the woods.
+
+Feel free to explore other actions as well, but these options will help set the stage for our journey!
+
+
+User: 1
+
+
+Assistant: <think>
+Alright, the player has chosen option 1: Enter the forest, cautiously exploring the path ahead. I need to respond in a way that continues the story and provides new choices. 
+
+I'll start by describing the initial part of their journey into the forest. It's important to convey the atmosphere—mystical yet slightly eerie—with details like glowing moss and ancient trees. Introducing a sound, like distant singing, adds intrigue and hints at potential challenges or interactions ahead.
+
+Next, I should offer several options that allow the player to make meaningful choices. These could include investigating the source of the singing, examining the environment for clues, resting to conserve energy, or proceeding further along the path. Each option leads to different possibilities, keeping the narrative dynamic.
+
+I also want to hint at a hidden threat, such as a predator stalking nearby, to add tension without revealing too much. This encourages the player to think strategically about their next moves.
+
+Finally, I'll make sure the response is engaging and sets up future interactions, ensuring the story remains flexible based on the player's decisions.
+</think>
+
+As you step into the Enchanted Forest, the path ahead twists and winds through towering trees with bark that seems to shimmer faintly in the dim light. The air feels cooler here, and the soft hum grows louder, now accompanied by the distant sound of what might be singing—or perhaps something more unsettling. You notice glowing moss covering the tree roots, illuminating the forest floor with an eerie green light.
+
+What would you like to do?
+
+1. Follow the path deeper into the forest, keeping your eyes peeled for any signs of danger.
+2. Stop and listen carefully to identify the source of the singing or strange noises.
+3. Examine the glowing moss more closely to see if it holds any clues or magical properties.
+4. Rest briefly under a nearby tree to conserve energy before continuing.
+
+Unbeknownst to you, a pair of piercing yellow eyes watches your every move from within the shadows...
+
+
+User: I yell at the top of my lungs
+
+
+Assistant: <think>
+Alright, the player decided to yell at the top of their lungs. I need to respond in a way that fits the scenario and offers new options.
+
+Firstly, acknowledging the action: Yelling makes sense as an attempt to communicate or scare off any nearby threats. I should describe the immediate effect—how the sound echoes through the forest, possibly startling any creatures nearby.
+
+Next, considering the consequences: While yelling might have warned off some dangers, it could also attract more dangerous beings. This adds tension and gives the player a new set of choices based on their action.
+
+I'll provide options that allow the player to react to the situation—whether they want to hide, investigate further, or proceed cautiously. Each option should lead to different outcomes, keeping the story dynamic.
+
+Finally, I'll make sure the response is immersive, maintaining the mystical yet potentially perilous atmosphere of the forest.
+</think>
+
+Your yell echoes through the Enchanted Forest, startling a flock of small birds that scatter into the air with a flurry of wings. The singing you heard earlier suddenly stops, leaving an eerie silence in its wake. You notice movement in the shadows nearby—something large and unseen watches you from a distance.
+
+What would you like to do?
+
+1. Stay still and try to remain quiet, hoping whatever was watching doesn’t come closer.
+2. Yell again, louder this time, to assert your presence and possibly scare off any hidden threats.
+3. Slowly back away from the spot where you saw the movement in the shadows.
+4. Call out in a calm voice, trying to communicate with whoever—or whatever—is watching you.
+
+The forest seems to hold its breath as you wait for the next move...
+
+
+User: /exit
+
+
+
+
+
+------------------------END OF ATTEMPT------------------------
+
+

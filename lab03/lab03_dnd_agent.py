@@ -15,8 +15,10 @@ messages = [
     but rather a series of interactions that will lead to a story. You can also ask the players questions to further the story. your reponse shoudld be in the form of a (one) paragraph, followed by a list of options for the players to choose from. \
     Do not make choices for the player, the player can also with to do something that is not in the options you give them. If the player does something that is not in the options, \
     you can respond to that as well. you reserve the right to refuse player actions that are not in the options you gave them'},
+  {'role': 'assistant', 'content': '<PARAGRAPH>(a short paragraph giving exposition, story, new information, and the effects of previous player actions)</PARAGRAPH>\n\nOptions:\n1. <OPTION>\n2. <OPTION>\n3. <OPTION> \n What do you do?'},
+
 ]
-options = {'temperature': 0.5, 'max_tokens': 100}
+options = {'temperature': 0.2, 'max_tokens': 50}
 
 
 # But before here.

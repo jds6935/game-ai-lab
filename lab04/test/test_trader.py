@@ -49,6 +49,12 @@ def test_scenario(scenario):
     print('Expected: ',expected_response)
     assert not diff(json.loads(result), expected_response)
 
+lab04_params = {
+    "template_file": "lab04/lab04_trader_chat.json",
+    "sign": "Joel Sander",
+    "end_regex": r'ORDER(.*)DONE'
+}
+
 if __name__ == "__main__":
     test_scenario(
         {

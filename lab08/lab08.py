@@ -34,7 +34,7 @@ class OllamaEmbeddingFunction:
             input=input
         )
         
-        return embeddings.get("embeddings", [])
+        return embeddings.embeddings
 
 
 def load_documents(data_dir: str) -> Dict[str, str]:

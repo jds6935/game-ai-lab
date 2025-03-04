@@ -29,7 +29,11 @@ class OllamaEmbeddingFunction:
     
     def __call__(self, input: List[str]) -> List[List[float]]:
         """Generate embeddings for a list of texts using Ollama"""
-        pass
+        embeddings = ollama.embed(
+            model=self.model_name,
+            texts=input
+        )
+        return embeddings
 
 
 def load_documents(data_dir: str) -> Dict[str, str]:
@@ -116,9 +120,18 @@ def retrieve_context(collection: chromadb.Collection, query: str, n_results: int
     """
     Retrieve relevant context from ChromaDB based on the query
     """
-    pass
+    # Embed the query
+    query_embedding = collection.embed([query])[0]
+    
+    # Retrieve similar documents
+    results = collection.retrieve(query_embedding, n_results=n_results)
+    
+    # Get the text of the retrieved documents
+    contexts = [result["document"] for result in results]
+    
+    return contexts
 
-
+#omg hi joel :DDDDDDD 
 
 def generate_response(query: str, contexts: List[str], model: str = "mistral:latest") -> str:
     """

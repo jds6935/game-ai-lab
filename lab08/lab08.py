@@ -31,9 +31,10 @@ class OllamaEmbeddingFunction:
         """Generate embeddings for a list of texts using Ollama"""
         embeddings = ollama.embed(
             model=self.model_name,
-            texts=input
+            input=input
         )
-        return embeddings
+        
+        return embeddings.get("embeddings", [])
 
 
 def load_documents(data_dir: str) -> Dict[str, str]:
@@ -118,20 +119,27 @@ def setup_chroma_db(chunks: List[Dict[str, Any]], collection_name: str = "dnd_kn
 
 def retrieve_context(collection: chromadb.Collection, query: str, n_results: int = 3) -> List[str]:
     """
-    Retrieve relevant context from ChromaDB based on the query
+    Retrieve relevant context from ChromaDB based on the query.
     """
-    # Embed the query
-    query_embedding = collection.embed([query])[0]
+    # Embed the query using Ollama
+    query_embedding = ollama.embed(
+        model="nomic-embed-text",
+        input=[query]
+    ).embeddings[0]
     
-    # Retrieve similar documents
-    results = collection.retrieve(query_embedding, n_results=n_results)
-    
-    # Get the text of the retrieved documents
-    contexts = [result["document"] for result in results]
-    
+    # Retrieve similar documents from ChromaDB
+    results = collection.query(query_embeddings=[query_embedding], n_results=n_results)
+
+    # Ensure results["metadatas"] and results["documents"] are not nested lists
+    contexts = [
+        metadata["source"] + " - Chunk " + str(metadata["chunk"]) + ": " + text
+        for metadata_list, text_list in zip(results["metadatas"], results["documents"])
+        for metadata, text in zip(metadata_list, text_list)  # Unpacking nested lists
+    ]
+
     return contexts
 
-#omg hi joel :DDDDDDD 
+
 
 def generate_response(query: str, contexts: List[str], model: str = "mistral:latest") -> str:
     """
@@ -222,4 +230,4 @@ def main():
     
 
 if __name__ == "__main__":
-    main() 
+    main()

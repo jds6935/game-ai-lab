@@ -9,3 +9,6 @@ __pycache__/
 
 # Ignore all venv files in all directories
 **/venv/**
+
+# Ignore all chromadb files
+chromadb/**

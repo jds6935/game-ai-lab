@@ -11,10 +11,24 @@ from typing import List, Dict, Any, Optional
 import chromadb
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import ollama
-import hashlib
 import json
+import hashlib
 
-class RAGConfig:
+class OllamaEmbeddingFunction:
+    """Custom embedding function that uses Ollama for embeddings"""
+    
+    def __init__(self, model_name="nomic-embed-text"):
+        self.model_name = model_name
+    
+    def __call__(self, input: List[str]) -> List[List[float]]:
+        """Generate embeddings for a list of texts using Ollama"""
+        embeddings = ollama.embed(
+            model=self.model_name,
+            input=input
+        )
+        return embeddings.embeddings
+
+class RAG:
     """Configuration class for the RAG library."""
     
     def __init__(
@@ -44,202 +58,129 @@ class RAGConfig:
         self.db_path = db_path
         self.context_limit = context_limit
         self.n_results = n_results
-
-
-class OllamaEmbeddingFunction:
-    """Custom embedding function that uses Ollama for embeddings."""
-    
-    def __init__(self, model_name: str = "nomic-embed-text"):
-        self.model_name = model_name
-    
-    def __call__(self, input: List[str]) -> List[List[float]]:
-        """Generate embeddings for a list of texts using Ollama."""
-        embeddings = ollama.embed(model=self.model_name, input=input)
-        return embeddings.embeddings
-
-
-def load_documents(config: RAGConfig) -> Dict[str, str]:
-    """
-    Load text documents from the specified directory.
-    """
-    documents = {}
-    for file_path in glob.glob(os.path.join(config.data_dir, f"*.{config.file_extension}")):
-        with open(file_path, 'r') as file:
-            content = file.read()
-            documents[os.path.basename(file_path)] = content
-    
-    return documents
-
-
-def chunk_documents(config: RAGConfig, documents: Dict[str, str]) -> List[Dict[str, Any]]:
-    """
-    Split documents into smaller chunks for embedding.
-    """
-    chunked_documents = []
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=config.chunk_size,
-        chunk_overlap=config.chunk_overlap,
-        length_function=len
-    )
-    
-    for doc_name, content in documents.items():
-        chunks = text_splitter.split_text(content)
-        for i, chunk in enumerate(chunks):
-            chunked_documents.append({
-                "id": f"{doc_name}_chunk_{i}",
-                "text": chunk,
-                "metadata": {"source": doc_name, "chunk": i}
-            })
-    
-    return chunked_documents
-
-
-def compute_file_hash(file_path):
-    """Compute a hash of the file content to detect changes."""
-    hasher = hashlib.md5()
-    with open(file_path, "rb") as f:
-        hasher.update(f.read())
-    return hasher.hexdigest()
-
-def compute_config_hash(config):
-    """Compute a hash based on config parameters to detect changes."""
-    config_dict = {
-        "chunk_size": config.chunk_size,
-        "chunk_overlap": config.chunk_overlap,
-        "embedding_model": config.embedding_model,
-        "llm_model": config.llm_model,
-        "n_results": config.n_results
-    }
-    return hashlib.md5(json.dumps(config_dict, sort_keys=True).encode()).hexdigest()
-
-def setup_chroma_db(config, chunks):
-    """
-    Initialize the ChromaDB collection, resetting data if configuration or embedding dimension changes.
-    This version avoids re-embedding chunks that haven't changed.
-    """
-    if config.persistent:
-        client = chromadb.PersistentClient(path=config.db_path)
-    else:
-        client = chromadb.Client()
-
-    embedding_function = OllamaEmbeddingFunction(model_name=config.embedding_model)
-
-    try:
-        # Retrieve the existing collection with the correct embedding function.
-        collection = client.get_collection(config.collection_name, embedding_function=embedding_function)
-        existing_metadata = collection.get()["metadatas"]
+        self.metadata_file = os.path.join(self.db_path or ".", "db_metadata.json")
         
-        # Get stored embedding dimension from the first chunk in the collection (if any)
-        stored_dim = existing_metadata[0].get("embedding_dim") if existing_metadata else None
-        test_embedding = ollama.embed(model=config.embedding_model, input=["test"]).embeddings[0]
-        current_dim = len(test_embedding)
+        # Initialize ChromaDB client
+        self.client = chromadb.PersistentClient(path=db_path) if persistent else chromadb.EphemeralClient()
         
-        print(f"🧠 Expected embedding dimension: {stored_dim}, Current model dimension: {current_dim}")
-        
-        # If the stored dimension does not match, reset the collection.
-        if stored_dim != current_dim:
-            print(f"⚠️ Embedding dimension changed ({stored_dim} → {current_dim}). Resetting collection...")
-            client.delete_collection(config.collection_name)
-            collection = client.create_collection(
-                name=config.collection_name,
-                embedding_function=embedding_function
-            )
-            stored_dim = current_dim
-            reembed_all = True
-        else:
-            reembed_all = False
-
-    except Exception as e:
-        print(f"Creating new collection: {config.collection_name} because: {e}")
-        collection = client.create_collection(
-            name=config.collection_name,
-            embedding_function=embedding_function
+        # Create or get collection
+        self.collection = self.client.get_or_create_collection(
+            name=self.collection_name,
+            embedding_function=OllamaEmbeddingFunction(model_name=self.embedding_model)
         )
-        test_embedding = ollama.embed(model=config.embedding_model, input=["test"]).embeddings[0]
-        stored_dim = len(test_embedding)
-        reembed_all = True
 
-    # Only re-embed chunks if necessary (e.g., first run or detected changes)
-    if reembed_all:
-        for chunk in chunks:
-            chunk_embedding = ollama.embed(model=config.embedding_model, input=[chunk["text"]]).embeddings[0]
-            chunk_dim = len(chunk_embedding)
-            print(f"🔍 Chunk ID {chunk['id']} has embedding dimension: {chunk_dim}")
-            if chunk_dim != stored_dim:
-                raise ValueError(f"❌ Mismatched embedding dimension for chunk {chunk['id']}: {chunk_dim} vs expected {stored_dim}")
-            chunk["metadata"]["embedding_dim"] = stored_dim
+    def compute_hash(self, data: Any) -> str:
+        """Compute a hash for the given data."""
+        return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()
 
-        collection.add(
+    def load_previous_metadata(self) -> dict:
+        """Load previous metadata from file if it exists."""
+        if os.path.exists(self.metadata_file):
+            with open(self.metadata_file, "r") as f:
+                return json.load(f)
+        return {}
+
+    def save_metadata(self, metadata: dict):
+        """Save metadata to a file."""
+        with open(self.metadata_file, "w") as f:
+            json.dump(metadata, f, indent=4)
+
+    def has_changes(self, new_metadata: dict) -> bool:
+        """Check if the new metadata differs from the stored one."""
+        old_metadata = self.load_previous_metadata()
+        return old_metadata.get("hash") != new_metadata.get("hash")
+
+    def start(self):
+        """Initialize the RAG system only if documents or config have changed."""
+        documents = self.load_documents()
+        chunks = self.chunk_documents(documents)
+
+        # Compute new metadata hash
+        metadata = {
+            "config": {
+                "chunk_size": self.chunk_size,
+                "chunk_overlap": self.chunk_overlap,
+                "embedding_model": self.embedding_model,
+                "llm_model": self.llm_model,
+                "instruction": self.instruction,
+                "collection_name": self.collection_name,
+                "context_limit": self.context_limit,
+                "n_results": self.n_results,
+            },
+            "documents": documents,
+        }
+        metadata_hash = self.compute_hash(metadata)
+
+        if self.has_changes({"hash": metadata_hash}):
+            print("Changes detected! Updating embeddings...")
+            self.setup_chroma_db(chunks)
+            self.save_metadata({"hash": metadata_hash})
+        else:
+            print("No changes detected. Using existing embeddings.")
+
+    def load_documents(self) -> Dict[str, str]:
+        """Load documents from the specified directory."""
+        documents = {}
+        for file_path in glob.glob(os.path.join(self.data_dir, f"*.{self.file_extension}")):
+            with open(file_path, "r") as file:
+                documents[os.path.basename(file_path)] = file.read()
+        return documents
+
+    def chunk_documents(self, documents: Dict[str, str]) -> List[Dict[str, Any]]:
+        """Chunk documents into smaller pieces."""
+        chunker = RecursiveCharacterTextSplitter(
+            chunk_size=self.chunk_size,
+            chunk_overlap=self.chunk_overlap,
+            length_function=len
+        )
+        chunks = []
+        for doc_name, content in documents.items():
+            for i, chunk in enumerate(chunker.split_text(content)):
+                chunks.append({
+                    "id": f"{doc_name}_chunk_{i}",
+                    "text": chunk,
+                    "metadata": {"source": doc_name, "chunk": i}
+                })
+        return chunks
+
+    def setup_chroma_db(self, chunks: List[Dict[str, Any]]):
+        """Set up ChromaDB for vector storage."""
+        self.collection.add(
             ids=[chunk["id"] for chunk in chunks],
             documents=[chunk["text"] for chunk in chunks],
             metadatas=[chunk["metadata"] for chunk in chunks]
         )
-        print(f"✅ Added {len(chunks)} chunks to ChromaDB.")
-    else:
-        print("✅ Loaded existing collection; no re-embedding necessary.")
 
-    return collection
+    def retrieve_context(self, query: str) -> List[str]:
+        """Retrieve context from the ChromaDB collection."""
+        query_embedding = ollama.embed(model=self.embedding_model, input=[query]).embeddings[0]
+        results = self.collection.query(query_embeddings=[query_embedding], n_results=self.n_results)
+        
+        return [
+            f"{metadata['source']} - Chunk {metadata['chunk']}: {text}"
+            for metadata_list, text_list in zip(results["metadatas"], results["documents"])
+            for metadata, text in zip(metadata_list, text_list)
+        ]
 
+    def generate_response(self, query: str, contexts: List[str]) -> str:
+        """Generate a response using the LLM model."""
+        context_text = "\n\n".join(contexts)
+        prompt = f"""{self.instruction}\n\nContext:\n{context_text}\n\nQuestion: {query}\n\nAnswer:"""
+        response = ollama.generate(model=self.llm_model, prompt=prompt)
+        return response["response"]
 
-def retrieve_context(config: RAGConfig, collection: chromadb.Collection, query: str) -> List[str]:
-    """
-    Retrieve relevant context from ChromaDB based on the query.
-    """
-    query_embedding = ollama.embed(
-        model=config.embedding_model,
-        input=[query]
-    ).embeddings[0]
-    
-    results = collection.query(query_embeddings=[query_embedding], n_results=config.n_results)
-    
-    contexts = [
-        metadata["source"] + " - Chunk " + str(metadata["chunk"]) + ": " + text
-        for metadata_list, text_list in zip(results["metadatas"], results["documents"])
-        for metadata, text in zip(metadata_list, text_list)
-    ]
-    
-    return contexts
+    def run_query(self, query: str) -> str:
+        """Run a query on the RAG system."""
+        contexts = self.retrieve_context(query)
+        response = self.generate_response(query, contexts)
+        #self.display_results(query, contexts, response)
+        return response
 
-
-def generate_response(config: RAGConfig, query: str, contexts: List[str]) -> str:
-    """
-    Generate a response using an LLM with the retrieved context.
-    """
-    context_text = "\n\n".join(contexts)
-    prompt = f"""
-    {config.instruction}
-    
-    Context:
-    {context_text}
-    
-    Question: {query}
-    
-    Answer:"""
-    
-    response = ollama.generate(
-        model=config.llm_model,
-        prompt=prompt,
-    )
-    
-    return response["response"]
-
-
-def display_results(config: RAGConfig, query: str, contexts: List[str], response: str) -> None:
-    """
-    Display the results in a formatted way.
-    """
-    print("\n" + "="*80)
-    print(f"QUERY: {query}")
-    print("="*80)
-    
-    print("\nCONTEXT USED:")
-    print("-"*80)
-    for i, context in enumerate(contexts, 1):
-        print(f"Context {i}:")
-        print(context[:config.context_limit] + "..." if len(context) > config.context_limit else context)
-        print()
-    
-    print("\nGENERATED RESPONSE:")
-    print("-"*80)
-    print(response)
-    print("="*80 + "\n")
+    def display_results(self, query: str, contexts: List[str], response: str):
+        """Display the results of the query."""
+        print(f"\nQUERY: {query}\n")
+        print("CONTEXT:")
+        for i, context in enumerate(contexts, 1):
+            print(f"Context {i}: {context[:200]}...")
+        print("\nRESPONSE:")
+        print(response)
